@@ -8,12 +8,15 @@ import ResponseArea from '@/components/ResponseArea';
 import { YouTubeFormData } from '@/components/YouTubeSection';
 import { NotionFormData } from '@/components/NotionSection';
 import { DiscordFormData } from '@/components/DiscordSection';
+import UnifiedStudyForm, { UnifiedStudyData } from '@/components/UnifiedStudyForm';
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [activeService, setActiveService] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [responseData, setResponseData] = useState<any>(null);
+  const { toast } = useToast();
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
@@ -85,6 +88,70 @@ const Index = () => {
     });
   };
 
+  const handleUnifiedSubmit = async (data: UnifiedStudyData) => {
+    setIsLoading(true);
+    toast({
+      title: "Processing study plan",
+      description: `Creating a comprehensive plan for: ${data.topic}`,
+    });
+    
+    // We'll simulate processing for all three services
+    await simulateApiCall(3000);
+    
+    // Create a comprehensive response combining all three services
+    const unifiedResponse = {
+      summary: `Study Plan for: ${data.topic}\n\n`,
+      flashcards: [],
+      sections: []
+    };
+    
+    if (data.youtubeEnabled) {
+      unifiedResponse.summary += `• YouTube: Found 3 educational videos on ${data.topic}\n`;
+      unifiedResponse.summary += `• Key concepts extracted and summarized\n`;
+      unifiedResponse.sections.push({
+        title: "YouTube Learning",
+        content: `Top video: "${data.topic} Explained" (15:42)`
+      });
+    }
+    
+    if (data.notionEnabled) {
+      unifiedResponse.summary += `• Notion: Created comprehensive notes on ${data.topic}\n`;
+      unifiedResponse.summary += `• Organized in your ${data.topic} study folder\n`;
+      unifiedResponse.sections.push({
+        title: "Notion Storage",
+        content: `Study notes saved to "Study Materials/${data.topic}"`
+      });
+    }
+    
+    if (data.discordEnabled) {
+      unifiedResponse.summary += `• Discord: Set up daily reminders to study ${data.topic}\n`;
+      unifiedResponse.summary += `• Will send notifications at 7:00 PM\n`;
+      unifiedResponse.sections.push({
+        title: "Discord Reminders",
+        content: `Daily reminder: "Time to study ${data.topic}!" at 7:00 PM`
+      });
+    }
+    
+    if (data.createFlashcards) {
+      unifiedResponse.summary += `• Created 5 flashcards to test your knowledge\n`;
+      unifiedResponse.flashcards = [
+        { question: `What is the main concept behind ${data.topic}?`, answer: "This would be filled with real content from an AI response" },
+        { question: `How is ${data.topic} applied in real-world scenarios?`, answer: "This would be filled with real content from an AI response" },
+        { question: `What are the key components of ${data.topic}?`, answer: "This would be filled with real content from an AI response" }
+      ];
+    }
+    
+    unifiedResponse.videoTitle = `Complete Study Plan: ${data.topic}`;
+    
+    setResponseData(unifiedResponse);
+    setIsLoading(false);
+    
+    toast({
+      title: "Study plan created!",
+      description: `Your comprehensive plan for ${data.topic} is ready`,
+    });
+  };
+
   return (
     <div className={`min-h-screen flex flex-col bg-background ${isDarkMode ? 'dark' : ''}`}>
       <Header toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
@@ -101,29 +168,44 @@ const Index = () => {
         </section>
         
         {!activeService ? (
-          <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 animate-fade-in">
-            <ServiceCard 
-              title="YouTube Learning"
-              description="Find and summarize educational videos on any topic"
-              icon={Youtube}
-              variant="youtube"
-              onClick={() => handleServiceSelect('youtube')}
-            />
-            <ServiceCard 
-              title="Notion Storage"
-              description="Save summaries, flashcards, and study plans to Notion"
-              icon={BookType}
-              variant="notion"
-              onClick={() => handleServiceSelect('notion')}
-            />
-            <ServiceCard 
-              title="Discord Reminders"
-              description="Set up study reminders and motivational messages"
-              icon={MessageCircle}
-              variant="discord"
-              onClick={() => handleServiceSelect('discord')}
-            />
-          </section>
+          <>
+            <div className="mb-12 animate-fade-in">
+              <UnifiedStudyForm onSubmit={handleUnifiedSubmit} loading={isLoading} />
+            </div>
+            
+            <div className="flex justify-center mb-6">
+              <div className="relative">
+                <hr className="absolute top-1/2 w-full border-t border-gray-200" />
+                <span className="relative bg-background px-4 text-sm text-muted-foreground">
+                  Or choose a specific service
+                </span>
+              </div>
+            </div>
+            
+            <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 animate-fade-in">
+              <ServiceCard 
+                title="YouTube Learning"
+                description="Find and summarize educational videos on any topic"
+                icon={Youtube}
+                variant="youtube"
+                onClick={() => handleServiceSelect('youtube')}
+              />
+              <ServiceCard 
+                title="Notion Storage"
+                description="Save summaries, flashcards, and study plans to Notion"
+                icon={BookType}
+                variant="notion"
+                onClick={() => handleServiceSelect('notion')}
+              />
+              <ServiceCard 
+                title="Discord Reminders"
+                description="Set up study reminders and motivational messages"
+                icon={MessageCircle}
+                variant="discord"
+                onClick={() => handleServiceSelect('discord')}
+              />
+            </section>
+          </>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
             <QueryForm 
