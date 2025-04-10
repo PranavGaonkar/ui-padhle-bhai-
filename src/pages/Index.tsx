@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import { Youtube, BookType, MessageCircle } from 'lucide-react';
@@ -27,7 +26,6 @@ const Index = () => {
     setActiveService(service);
   };
 
-  // Mock function to simulate API calls
   const simulateApiCall = (delay: number = 1500) => {
     setIsLoading(true);
     return new Promise<void>((resolve) => {
@@ -41,7 +39,6 @@ const Index = () => {
   const handleYouTubeSubmit = async (data: YouTubeFormData) => {
     await simulateApiCall();
     
-    // Mock response data
     setResponseData({
       summary: "This video explains the Gaussian Elimination method for solving systems of linear equations.\n\n• Gaussian Elimination transforms a system of linear equations into row echelon form\n• The method uses elementary row operations: scaling, swapping, and adding rows\n• Key steps include: creating a matrix, applying row operations to get upper triangular form, and back-substitution\n• The video demonstrates the process with a 3x3 system of equations\n• Time complexity is O(n³) where n is the number of variables/equations",
       flashcards: [
@@ -67,7 +64,6 @@ const Index = () => {
   const handleNotionSubmit = async (data: NotionFormData) => {
     await simulateApiCall();
     
-    // Mock response - this would typically confirm successful storage
     setResponseData({
       summary: data.content,
       flashcards: data.contentType === 'flashcards' ? [
@@ -81,7 +77,6 @@ const Index = () => {
   const handleDiscordSubmit = async (data: DiscordFormData) => {
     await simulateApiCall();
     
-    // Mock response - this would typically confirm the reminder was set
     setResponseData({
       summary: `Your reminder "${data.reminderText}" has been set for ${data.frequency} at ${data.time}.`,
       videoTitle: "Discord Reminder Configured",
@@ -95,14 +90,13 @@ const Index = () => {
       description: `Creating a comprehensive plan for: ${data.topic}`,
     });
     
-    // We'll simulate processing for all three services
     await simulateApiCall(3000);
     
-    // Create a comprehensive response combining all three services
     const unifiedResponse = {
       summary: `Study Plan for: ${data.topic}\n\n`,
       flashcards: [],
-      sections: []
+      sections: [],
+      videoTitle: `Padhle AI Study Plan: ${data.topic}`
     };
     
     if (data.youtubeEnabled) {
@@ -141,8 +135,6 @@ const Index = () => {
       ];
     }
     
-    unifiedResponse.videoTitle = `Complete Study Plan: ${data.topic}`;
-    
     setResponseData(unifiedResponse);
     setIsLoading(false);
     
@@ -159,7 +151,7 @@ const Index = () => {
       <main className="flex-1 container mx-auto px-4 py-8">
         <section className="text-center mb-12 animate-fade-in">
           <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-purple to-purple-dark bg-clip-text text-transparent">
-            StudyBuddy AI Assistant
+            Padhle AI Study Assistant
           </h1>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
             Your AI-powered learning companion that helps you discover educational content, 
@@ -230,7 +222,7 @@ const Index = () => {
       </main>
       
       <footer className="border-t py-6 text-center text-sm text-muted-foreground">
-        <p>© 2025 StudyBuddy AI Assistant. All rights reserved.</p>
+        <p>© 2025 Padhle AI. All rights reserved.</p>
       </footer>
     </div>
   );

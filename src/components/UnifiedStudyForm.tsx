@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -77,7 +76,7 @@ const UnifiedStudyForm: React.FC<UnifiedStudyFormProps> = ({ onSubmit, loading }
     <Card className="w-full animate-fade-in">
       <CardHeader className="bg-gradient-to-r from-purple to-purple-dark rounded-t-lg">
         <CardTitle className="text-white flex items-center gap-2">
-          <Sparkles className="h-5 w-5" /> Unified Study Assistant
+          <Sparkles className="h-5 w-5" /> Padhle AI Study Assistant
         </CardTitle>
         <CardDescription className="text-white/80">
           Enter a topic to create your complete study plan
