@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +20,8 @@ export interface UnifiedStudyData {
   discordEnabled: boolean;
   createFlashcards: boolean;
   sendReminders: boolean;
+  lyzrEnhanced?: boolean;
+  lyzrResponse?: string;
 }
 
 const UnifiedStudyForm: React.FC<UnifiedStudyFormProps> = ({ onSubmit, loading }) => {

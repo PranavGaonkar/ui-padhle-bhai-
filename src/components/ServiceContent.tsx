@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import QueryForm from '@/components/QueryForm';
 import ResponseArea from '@/components/ResponseArea';
@@ -6,6 +7,7 @@ import { NotionFormData } from '@/components/NotionSection';
 import { DiscordFormData } from '@/components/DiscordSection';
 import { sendMessageToLyzr } from '@/utils/lyzrApi';
 import { useToast } from "@/hooks/use-toast";
+import UnifiedStudyForm, { UnifiedStudyData } from '@/components/UnifiedStudyForm';
 
 interface ServiceContentProps {
   isLoading: boolean;
@@ -13,7 +15,9 @@ interface ServiceContentProps {
   onYouTubeSubmit: (data: YouTubeFormData) => void;
   onNotionSubmit: (data: NotionFormData) => void;
   onDiscordSubmit: (data: DiscordFormData) => void;
+  onUnifiedStudySubmit?: (data: UnifiedStudyData) => void;
   onBack: () => void;
+  showUnifiedForm?: boolean;
 }
 
 const ServiceContent: React.FC<ServiceContentProps> = ({
@@ -22,9 +26,12 @@ const ServiceContent: React.FC<ServiceContentProps> = ({
   onYouTubeSubmit,
   onNotionSubmit,
   onDiscordSubmit,
-  onBack
+  onUnifiedStudySubmit,
+  onBack,
+  showUnifiedForm = false
 }) => {
   const [lyzrLoading, setLyzrLoading] = useState(false);
+  const [localResponseData, setLocalResponseData] = useState<any>(null);
   const { toast } = useToast();
 
   const handleYouTubeSubmit = async (data: YouTubeFormData) => {
@@ -105,28 +112,84 @@ const ServiceContent: React.FC<ServiceContentProps> = ({
         ...data,
         reminderText: data.reminderText + "\n\nLyzr AI Tips: " + lyzrResponse.response
       });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to process with Lyzr AI. Using original reminder.",
-        variant: "destructive",
-      });
-      
-      onDiscordSubmit(data);
     } finally {
       setLyzrLoading(false);
     }
   };
 
+  const handleUnifiedStudySubmit = async (data: UnifiedStudyData) => {
+    if (!onUnifiedStudySubmit) return;
+    
+    setLyzrLoading(true);
+    
+    try {
+      toast({
+        title: "Processing with Lyzr AI",
+        description: `Creating comprehensive study plan for: ${data.topic}`,
+      });
+      
+      const lyzrResponse = await sendMessageToLyzr(
+        `Create a comprehensive study plan for: ${data.topic}. Include key concepts, learning resources, and study tips.`
+      );
+      
+      // Process local response for immediate display
+      const unifiedResponse = {
+        summary: `Study Plan for: ${data.topic}\n\n${lyzrResponse.response}`,
+        flashcards: [
+          { 
+            question: `What is the main concept behind ${data.topic}?`, 
+            answer: "Explore the fundamental principles and core ideas." 
+          },
+          { 
+            question: `How can I apply ${data.topic} in real-world scenarios?`, 
+            answer: "Look for practical applications and case studies." 
+          },
+          { 
+            question: `What are the key components of ${data.topic}?`, 
+            answer: "Break down the subject into its essential elements." 
+          }
+        ],
+        videoTitle: `Padhle AI Study Plan: ${data.topic}`
+      };
+      
+      // Update local state
+      setLocalResponseData(unifiedResponse);
+      
+      // Send to parent
+      onUnifiedStudySubmit({
+        ...data,
+        lyzrEnhanced: true,
+        lyzrResponse: lyzrResponse.response
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to process with Lyzr AI. Using standard study plan.",
+        variant: "destructive",
+      });
+      
+      onUnifiedStudySubmit(data);
+    } finally {
+      setLyzrLoading(false);
+    }
+  };
+
+  // Determine which response data to use
+  const displayData = localResponseData || responseData;
+
   return (
     <>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-        <QueryForm 
-          onYouTubeSubmit={handleYouTubeSubmit}
-          onNotionSubmit={handleNotionSubmit}
-          onDiscordSubmit={handleDiscordSubmit}
-        />
-        <ResponseArea loading={isLoading || lyzrLoading} data={responseData} />
+        {showUnifiedForm ? (
+          <UnifiedStudyForm onSubmit={handleUnifiedStudySubmit} loading={isLoading || lyzrLoading} />
+        ) : (
+          <QueryForm 
+            onYouTubeSubmit={handleYouTubeSubmit}
+            onNotionSubmit={handleNotionSubmit}
+            onDiscordSubmit={handleDiscordSubmit}
+          />
+        )}
+        <ResponseArea loading={isLoading || lyzrLoading} data={displayData} />
       </div>
       
       <div className="text-center">

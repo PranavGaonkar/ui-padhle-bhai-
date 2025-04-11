@@ -16,6 +16,7 @@ const Index = () => {
   const [activeService, setActiveService] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [responseData, setResponseData] = useState<any>(null);
+  const [showUnifiedForm, setShowUnifiedForm] = useState(true);
   const { toast } = useToast();
 
   const toggleTheme = () => {
@@ -25,6 +26,7 @@ const Index = () => {
 
   const handleServiceSelect = (service: string) => {
     setActiveService(service);
+    setShowUnifiedForm(false);
   };
 
   const simulateApiCall = (delay: number = 1500) => {
@@ -93,6 +95,7 @@ const Index = () => {
     
     await simulateApiCall(3000);
     
+    // Create a response that will be shown immediately
     const unifiedResponse = {
       summary: `Study Plan for: ${data.topic}\n\n`,
       flashcards: [],
@@ -136,7 +139,9 @@ const Index = () => {
       ];
     }
     
+    // Set response data to display in the UI
     setResponseData(unifiedResponse);
+    
     setIsLoading(false);
     
     toast({
@@ -167,7 +172,9 @@ const Index = () => {
             onYouTubeSubmit={handleYouTubeSubmit}
             onNotionSubmit={handleNotionSubmit}
             onDiscordSubmit={handleDiscordSubmit}
+            onUnifiedStudySubmit={handleUnifiedSubmit}
             onBack={() => setActiveService(null)}
+            showUnifiedForm={showUnifiedForm}
           />
         )}
       </main>
