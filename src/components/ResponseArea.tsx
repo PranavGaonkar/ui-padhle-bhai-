@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Bot, BookOpen, Clock, Quote, ExternalLink } from 'lucide-react';
+import { Bot, BookOpen, Clock, Quote, ExternalLink, Brain } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ interface ResponseAreaProps {
     videoUrl?: string;
     videoTitle?: string;
     duration?: string;
+    lyzrAgentResponse?: string;  // Add Lyzr agent response field
   };
 }
 
@@ -71,7 +72,7 @@ const ResponseArea: React.FC<ResponseAreaProps> = ({ loading, data }) => {
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="summary" className="w-full">
-          <TabsList className="w-full grid grid-cols-3">
+          <TabsList className="w-full grid grid-cols-4">
             <TabsTrigger value="summary" className="flex items-center gap-1">
               <BookOpen className="h-4 w-4" /> Summary
             </TabsTrigger>
@@ -80,6 +81,9 @@ const ResponseArea: React.FC<ResponseAreaProps> = ({ loading, data }) => {
             </TabsTrigger>
             <TabsTrigger value="video" className="flex items-center gap-1">
               <ExternalLink className="h-4 w-4" /> Video Info
+            </TabsTrigger>
+            <TabsTrigger value="agent" className="flex items-center gap-1">
+              <Brain className="h-4 w-4" /> AI Agent
             </TabsTrigger>
           </TabsList>
           
@@ -153,6 +157,24 @@ const ResponseArea: React.FC<ResponseAreaProps> = ({ loading, data }) => {
                 </div>
               )}
             </div>
+          </TabsContent>
+          
+          {/* New Tab for Lyzr AI Agent Response */}
+          <TabsContent value="agent" className="mt-4">
+            <ScrollArea className="h-[300px] rounded-md border p-4">
+              {data.lyzrAgentResponse ? (
+                <div className="space-y-4">
+                  <h3 className="font-medium">AI Agent Response</h3>
+                  <div className="text-sm text-muted-foreground whitespace-pre-line">
+                    {data.lyzrAgentResponse}
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <p className="text-muted-foreground">No AI agent response available</p>
+                </div>
+              )}
+            </ScrollArea>
           </TabsContent>
         </Tabs>
       </CardContent>

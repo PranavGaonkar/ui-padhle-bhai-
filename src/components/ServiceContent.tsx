@@ -149,7 +149,8 @@ const ServiceContent: React.FC<ServiceContentProps> = ({
             answer: "Break down the subject into its essential elements." 
           }
         ],
-        videoTitle: `Padhle AI Study Plan: ${data.topic}`
+        videoTitle: `Padhle AI Study Plan: ${data.topic}`,
+        lyzrAgentResponse: lyzrResponse.response  // Add the raw Lyzr response
       };
       
       // Update local state

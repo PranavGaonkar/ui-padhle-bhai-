@@ -100,7 +100,8 @@ const Index = () => {
       summary: `Study Plan for: ${data.topic}\n\n`,
       flashcards: [],
       sections: [],
-      videoTitle: `Padhle AI Study Plan: ${data.topic}`
+      videoTitle: `Padhle AI Study Plan: ${data.topic}`,
+      lyzrAgentResponse: data.lyzrResponse || "AI response is being processed..." // Add the Lyzr Agent response
     };
     
     if (data.youtubeEnabled) {
