@@ -1,13 +1,14 @@
+
 import React, { useState } from 'react';
 import Header from '@/components/Header';
-import { Youtube, BookType, MessageCircle } from 'lucide-react';
-import ServiceCard from '@/components/ServiceCard';
-import QueryForm from '@/components/QueryForm';
-import ResponseArea from '@/components/ResponseArea';
+import Hero from '@/components/Hero';
+import ServiceSelection from '@/components/ServiceSelection';
+import ServiceContent from '@/components/ServiceContent';
+import Footer from '@/components/Footer';
+import UnifiedStudyForm, { UnifiedStudyData } from '@/components/UnifiedStudyForm';
 import { YouTubeFormData } from '@/components/YouTubeSection';
 import { NotionFormData } from '@/components/NotionSection';
 import { DiscordFormData } from '@/components/DiscordSection';
-import UnifiedStudyForm, { UnifiedStudyData } from '@/components/UnifiedStudyForm';
 import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
@@ -149,87 +150,29 @@ const Index = () => {
       <Header toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
       
       <main className="flex-1 container mx-auto px-4 py-8">
-        <section className="text-center mb-12 animate-fade-in">
-          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-purple to-purple-dark bg-clip-text text-transparent">
-            Kyu nahi ho rahi padhai?
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-6">
-            Struggling to study? Can't manage your notes, YouTube content, or Discord messages?
-          </p>
-          <h2 className="text-2xl font-semibold mb-3">
-            📚 Meet your AI Study Buddy
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Your personalized learning companion that helps you stay focused, 
-            organize notes, and find the right content — all in one place.
-          </p>
-        </section>
-        
         {!activeService ? (
           <>
+            <Hero />
+            
             <div className="mb-12 animate-fade-in">
               <UnifiedStudyForm onSubmit={handleUnifiedSubmit} loading={isLoading} />
             </div>
             
-            <div className="flex justify-center mb-6">
-              <div className="relative">
-                <hr className="absolute top-1/2 w-full border-t border-gray-200" />
-                <span className="relative bg-background px-4 text-sm text-muted-foreground">
-                  Or choose a specific service
-                </span>
-              </div>
-            </div>
-            
-            <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 animate-fade-in">
-              <ServiceCard 
-                title="YouTube Learning"
-                description="Find and summarize educational videos on any topic"
-                icon={Youtube}
-                variant="youtube"
-                onClick={() => handleServiceSelect('youtube')}
-              />
-              <ServiceCard 
-                title="Notion Storage"
-                description="Save summaries, flashcards, and study plans to Notion"
-                icon={BookType}
-                variant="notion"
-                onClick={() => handleServiceSelect('notion')}
-              />
-              <ServiceCard 
-                title="Discord Reminders"
-                description="Set up study reminders and motivational messages"
-                icon={MessageCircle}
-                variant="discord"
-                onClick={() => handleServiceSelect('discord')}
-              />
-            </section>
+            <ServiceSelection onServiceSelect={handleServiceSelect} />
           </>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-            <QueryForm 
-              onYouTubeSubmit={handleYouTubeSubmit}
-              onNotionSubmit={handleNotionSubmit}
-              onDiscordSubmit={handleDiscordSubmit}
-            />
-            <ResponseArea loading={isLoading} data={responseData} />
-          </div>
-        )}
-        
-        {activeService && (
-          <div className="text-center">
-            <button 
-              onClick={() => setActiveService(null)} 
-              className="text-sm text-muted-foreground hover:text-purple transition-colors"
-            >
-              &larr; Back to all services
-            </button>
-          </div>
+          <ServiceContent 
+            isLoading={isLoading}
+            responseData={responseData}
+            onYouTubeSubmit={handleYouTubeSubmit}
+            onNotionSubmit={handleNotionSubmit}
+            onDiscordSubmit={handleDiscordSubmit}
+            onBack={() => setActiveService(null)}
+          />
         )}
       </main>
       
-      <footer className="border-t py-6 text-center text-sm text-muted-foreground">
-        <p>© 2025 Padhle AI. All rights reserved.</p>
-      </footer>
+      <Footer />
     </div>
   );
 };
