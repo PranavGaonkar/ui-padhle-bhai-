@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +16,7 @@ export interface YouTubeFormData {
   maxDuration: string;
   summarize: boolean;
   createFlashcards: boolean;
+  lyzrResponse?: string;
 }
 
 const YouTubeSection: React.FC<YouTubeSectionProps> = ({ onSubmit }) => {

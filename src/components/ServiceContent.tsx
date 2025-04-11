@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import QueryForm from '@/components/QueryForm';
 import ResponseArea from '@/components/ResponseArea';
@@ -41,10 +40,12 @@ const ServiceContent: React.FC<ServiceContentProps> = ({
       const lyzrResponse = await sendMessageToLyzr(`Find YouTube videos about: ${data.query}`);
       
       // Pass the enriched data to the parent handler
-      onYouTubeSubmit({
+      const enrichedData: YouTubeFormData = {
         ...data,
         lyzrResponse: lyzrResponse.response
-      });
+      };
+      
+      onYouTubeSubmit(enrichedData);
     } catch (error) {
       toast({
         title: "Error",
